@@ -1,0 +1,104 @@
+version: '3.8'
+
+services:
+  nginx-proxy:
+    image: nginxproxy/nginx-proxy
+    container_name: nginx-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./nginx/certs:/etc/nginx/certs
+      - ./nginx/vhost.d:/etc/nginx/vhost.d
+      - ./nginx/html:/usr/share/nginx/html
+    networks:
+      - app-network
+
+  acme-companion:
+    image: nginxproxy/acme-companion
+    container_name: nginx-proxy-acme
+    volumes_from:
+      - nginx-proxy
+    volumes:
+      - ./nginx/certs:/etc/nginx/certs
+      - ./nginx/acme.sh:/etc/acme.sh
+    environment:
+      - DEFAULT_EMAIL=tu-correo@abril.com.ar
+    depends_on:
+      - nginx-proxy
+
+  postgres:
+    image: postgres:14
+    container_name: abril-postgres-db
+    environment:
+      POSTGRES_DB: abril_db
+      POSTGRES_USER: abril_user
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  backend:
+    build:
+      context: ./backend
+    container_name: backend
+    env_file:
+      - ./backend/.env
+    environment:
+      - VIRTUAL_HOST=api.abrilamoblamientos.com.ar,api.local.com.ar
+      - LETSENCRYPT_HOST=api.abrilamoblamientos.com.ar
+    depends_on:
+      - postgres
+    networks:
+      - app-network
+
+  ws:
+    build:
+      context: ./ws
+    container_name: ws-service
+    env_file:
+      - ./ws/.env
+    environment:
+      - VIRTUAL_HOST=ws.abrilamoblamientos.com.ar,ws.local.com.ar
+      - LETSENCRYPT_HOST=ws.abrilamoblamientos.com.ar
+    networks:
+      - app-network
+
+  front-precios:
+    build:
+      context: ./front-precios
+    container_name: front-precios
+    environment:
+      - VIRTUAL_HOST=precios.abrilamoblamientos.com.ar,precios.local.com.ar
+      - LETSENCRYPT_HOST=precios.abrilamoblamientos.com.ar
+    networks:
+      - app-network
+
+  front-admin:
+    build:
+      context: ./front-admin
+    container_name: front-admin
+    environment:
+      - VIRTUAL_HOST=admin.abrilamoblamientos.com.ar,admin.local.com.ar
+      - LETSENCRYPT_HOST=admin.abrilamoblamientos.com.ar
+    networks:
+      - app-network
+
+  portal:
+    build:
+      context: ./portal
+    container_name: portal
+    environment:
+      - VIRTUAL_HOST=abrilamoblamientos.com.ar,local.com.ar
+      - LETSENCRYPT_HOST=abrilamoblamientos.com.ar
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
