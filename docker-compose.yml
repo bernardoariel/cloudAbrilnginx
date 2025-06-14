@@ -1,34 +1,6 @@
 version: '3.8'
 
 services:
-  nginx-proxy:
-    image: nginxproxy/nginx-proxy
-    container_name: nginx-proxy
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - /var/run/docker.sock:/tmp/docker.sock:ro
-      - ./nginx/certs:/etc/nginx/certs
-      - ./nginx/vhost.d:/etc/nginx/vhost.d
-      - ./nginx/html:/usr/share/nginx/html
-    networks:
-      - app-network
-
-  acme-companion:
-    image: nginxproxy/acme-companion
-    container_name: nginx-proxy-acme
-    volumes_from:
-      - nginx-proxy
-    volumes:
-      - ./nginx/certs:/etc/nginx/certs
-      - ./nginx/acme.sh:/etc/acme.sh
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    environment:
-      - DEFAULT_EMAIL=tu-correo@abril.com.ar
-    depends_on:
-      - nginx-proxy
-
   postgres:
     image: postgres:14
     container_name: abril-postgres-db
@@ -38,6 +10,8 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
     networks:
       - app-network
 
@@ -47,9 +21,8 @@ services:
     container_name: backend
     env_file:
       - ./backend/.env
-    environment:
-      - VIRTUAL_HOST=api.abrilamoblamientos.com.ar,api.local.com.ar
-      - LETSENCRYPT_HOST=api.abrilamoblamientos.com.ar
+    ports:
+      - "3000:3000"
     depends_on:
       - postgres
     networks:
@@ -61,9 +34,8 @@ services:
     container_name: ws-service
     env_file:
       - ./ws/.env
-    environment:
-      - VIRTUAL_HOST=ws.abrilamoblamientos.com.ar,ws.local.com.ar
-      - LETSENCRYPT_HOST=ws.abrilamoblamientos.com.ar
+    ports:
+      - "3001:3001"
     networks:
       - app-network
 
@@ -71,9 +43,8 @@ services:
     build:
       context: ./front-precios
     container_name: front-precios
-    environment:
-      - VIRTUAL_HOST=precios.abrilamoblamientos.com.ar,precios.local.com.ar
-      - LETSENCRYPT_HOST=precios.abrilamoblamientos.com.ar
+    ports:
+      - "8080:80"
     networks:
       - app-network
 
@@ -81,9 +52,8 @@ services:
     build:
       context: ./front-admin
     container_name: front-admin
-    environment:
-      - VIRTUAL_HOST=admin.abrilamoblamientos.com.ar,admin.local.com.ar
-      - LETSENCRYPT_HOST=admin.abrilamoblamientos.com.ar
+    ports:
+      - "8081:80"
     networks:
       - app-network
 
@@ -91,9 +61,8 @@ services:
     build:
       context: ./portal
     container_name: portal
-    environment:
-      - VIRTUAL_HOST=abrilamoblamientos.com.ar,local.com.ar
-      - LETSENCRYPT_HOST=abrilamoblamientos.com.ar
+    ports:
+      - "8082:80"
     networks:
       - app-network
 
