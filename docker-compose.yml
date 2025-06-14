@@ -23,6 +23,7 @@ services:
     volumes:
       - ./nginx/certs:/etc/nginx/certs
       - ./nginx/acme.sh:/etc/acme.sh
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     environment:
       - DEFAULT_EMAIL=tu-correo@abril.com.ar
     depends_on:
