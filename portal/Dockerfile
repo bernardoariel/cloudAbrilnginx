@@ -1,20 +1,13 @@
-# Etapa de construcción
-FROM node:18 AS builder
+FROM nginx:stable-alpine
 
-WORKDIR /app
+# Copiar los archivos estáticos
+COPY dist/ /usr/share/nginx/html/
 
-COPY package*.json ./
-RUN npm install
+# Copiar la configuración de nginx
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-COPY . .
-RUN npm run build
-
-# Etapa de producción
-FROM nginx:alpine
-
-COPY --from=builder /app/dist /usr/share/nginx/html
-COPY portal.conf /etc/nginx/conf.d/default.conf
-
+# Exponer el puerto 80
 EXPOSE 80
 
+# Iniciar nginx
 CMD ["nginx", "-g", "daemon off;"] 

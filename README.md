@@ -19,3 +19,23 @@
 ├── portal/                 ← Frontend Vue Admin 
 │   ├── Dockerfile
 │   ├── src/
+
+
+cloudAbril/
+├── front-precios/
+│   ├── dist/           # Para los archivos compilados
+│   ├── Dockerfile      # Para construir la imagen
+│   ├── nginx.conf      # Configuración de nginx
+│   └── .dockerignore   # Archivos a ignorar
+│
+├── front-admin/
+│   ├── dist/           # Para los archivos compilados
+│   ├── Dockerfile      # Para construir la imagen
+│   ├── nginx.conf      # Configuración de nginx
+│   └── .dockerignore   # Archivos a ignorar
+│
+└── portal/
+    ├── dist/           # Para los archivos compilados
+    ├── Dockerfile      # Para construir la imagen
+    ├── nginx.conf      # Configuración de nginx
+    └── .dockerignore   # Archivos a ignorar

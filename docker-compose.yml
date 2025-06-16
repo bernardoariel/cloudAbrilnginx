@@ -47,6 +47,7 @@ services:
       - "8080:80"
     networks:
       - app-network
+    restart: unless-stopped
 
   front-admin:
     build:
