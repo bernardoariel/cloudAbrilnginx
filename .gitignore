@@ -1,0 +1,4 @@
+# Ignore development directories which are separate git repositories
+dev.backend/
+dev.front-admin/
+dev.front-new-admin/ 

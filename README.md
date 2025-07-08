@@ -39,3 +39,6 @@ cloudAbril/
     ├── Dockerfile      # Para construir la imagen
     ├── nginx.conf      # Configuración de nginx
     └── .dockerignore   # Archivos a ignorar
+
+
+``` docker-compose up -d --no-deps --build backend ```
