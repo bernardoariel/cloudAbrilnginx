@@ -1,11 +1,38 @@
 import { IsString, Matches } from "class-validator";
 
-export class SendTextDto{
-    @IsString()
-    @Matches(/^54\d{10,11}$/, {
-        message: 'El número debe comenzar con 54 y tener 12 o 13 dígitos',
-})
+export class SendTextDto {
     to: string;
-    @IsString()
     message: string;
+}
+
+export class AvisoCompraDto {
+    to: string;
+    template: {
+        name: string;
+        language: { code: string };
+        components: Array<{
+            type: string;
+            parameters: Array<{
+                type: string;
+                parameter_name: string;
+                text: string;
+            }>;
+        }>;
+    };
+}
+
+export class AvisoPagoDto {
+    to: string;
+    template: {
+        name: string;
+        language: { code: string };
+        components: Array<{
+            type: string;
+            parameters: Array<{
+                type: string;
+                parameter_name: string;
+                text: string;
+            }>;
+        }>;
+    };
 }

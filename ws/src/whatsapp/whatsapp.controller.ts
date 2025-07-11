@@ -1,6 +1,6 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { WhatsappService } from './whatsapp.service';
-import { SendTextDto } from './dto/send-text.dto';
+import { SendTextDto, AvisoCompraDto, AvisoPagoDto } from './dto/send-text.dto';
 
 @Controller('whatsapp')
 export class WhatsappController {
@@ -32,15 +32,37 @@ export class WhatsappController {
   @Post('template')
   sendTemplate(@Body() body: { 
     to: string; 
-    templateName: string; 
-    languageCode: string; 
-    components: any[] 
+    template: {
+      name: string;
+      language: { code: string };
+      components: any[];
+    }
   }) {
     return this.whatsappService.sendTemplateMessage(
       body.to, 
-      body.templateName, 
-      body.languageCode, 
-      body.components
+      body.template.name, 
+      body.template.language.code, 
+      body.template.components
+    );
+  }
+
+  @Post('template/aviso_compra_abril')
+  sendAvisoCompra(@Body() body: AvisoCompraDto) {
+    return this.whatsappService.sendTemplateMessage(
+      body.to, 
+      body.template.name, 
+      body.template.language.code, 
+      body.template.components
+    );
+  }
+
+  @Post('template/aviso_pago')
+  sendAvisoPago(@Body() body: AvisoPagoDto) {
+    return this.whatsappService.sendTemplateMessage(
+      body.to, 
+      body.template.name, 
+      body.template.language.code, 
+      body.template.components
     );
   }
 }
