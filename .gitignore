@@ -1,4 +1,10 @@
 # Ignore development directories which are separate git repositories
+backend/
 dev.backend/
 dev.front-admin/
 dev.front-new-admin/ 
+front-admin/
+front-precios/
+portal/
+ws/
+.env
